@@ -108,16 +108,52 @@ const player = {
     piece:piece,
 }
 
-playerMove(value)
+function playerMove(value)
 {
     player.position.x += value;
     if(collide(arena,player))
     {
-        player.position.y -= value;
+        player.position.x -= value;
     }
 
 }
+function pieceRotate(value)
+{
+    const pos = player.position.x;
+    let offset = 1;
+    rotate(player.piece,value);
+    while(collide(arena,player))
+    {
+        player.position.x += offset;
+        offset = -(offset + (offset > 0 ? 1 : -1));
+        if (offset > player.piece[0].length)
+        {
+            rotate(player.piece, -value);
+            player.position.x = pos;
+            return;
+        }
+    }
+}
 
+function rotate(piece,value)
+{
+for (let y=0; y<piece.length; y++)
+{
+    for(let x=0; x<y; x++)
+    {
+        [piece[y][x],piece[x][y]]=[piece[x][y],piece[y][x]];
+    }
+
+}
+if(value > 0)
+{
+    piece.forEach(row => row.reverse());
+}
+else
+{
+    piece.reverse();
+}
+}
 document.addEventListener('keydown',e => {
 if( e.keyCode === 37 || e.keyCode === 65){
 playerMove(-1);
@@ -125,9 +161,15 @@ playerMove(-1);
 else if( e.keyCode === 39 || e.keyCode === 68 ){
     playerMove(1);
 }
-    else if( e.keyCode === 40 || e.keyCode === 83 ){
-        playerDrop();
-        }
+else if( e.keyCode === 40 || e.keyCode === 83 ){
+    playerDrop();
+}
+else if( e.keyCode === 90 ){
+    pieceRotate(1);
+}
+else if( e.keyCode === 88 ){
+    pieceRotate(-1);
+}
 });
 
 
