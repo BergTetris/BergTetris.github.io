@@ -5,15 +5,23 @@ let dropCounter = 0;
 let dropInterval = 1000;
 let lastTime = 0;
 
-const piece = 
-[
-[0,0,0],
-[1,1,1],
-[0,1,0],
-];
+
 
 const arena = createPiece(12,20);
 
+const colors =
+[
+    null,
+    'red',
+    'violet',
+    'blue',
+    'green',
+    'purple',
+    'white',
+    'orange',
+    'pink'
+
+]
 function collide(arena,player)
 {
 
@@ -42,7 +50,68 @@ function createPiece(w,h)
     }
     return piece;
 }
-
+function createElement(type)
+{
+    switch(type)
+    {
+        case 'T': return  [
+            [0,0,0],
+            [1,1,1],
+            [0,1,0],
+            ];
+            break;
+        case 'O': return  [
+            [2,2],
+            [2,2],
+            ];
+            break;
+        case 'C': return  [
+            [3,3,3],
+            [3,0,0],
+            [3,3,3],
+            ];
+            break;
+        case 'L': return  [
+            [4,0,0],
+            [4,0,0],
+            [4,4,4],
+            ];
+            break;
+            case 'I': return  [
+            [0,5,0,0],
+            [0,5,0,0],
+            [0,5,0,0],
+            [0,5,0,0],
+            ];
+            break;
+        case 'J': return  [
+            [0,6,0],
+            [0,6,0],
+            [6,6,0],
+            ];
+        case 'S': return  [
+            [0,7,7],
+            [7,7,0],
+            [0,0,0],
+            ]; 
+        case 'Z': return  [
+            [8,8,0],
+            [0,8,8],
+            [0,0,0],
+            ];                   
+    }
+}
+function playerReset()
+{
+    const pieces = "TOCLIJSZ";
+    player.piece = createElement(pieces[pieces.length * Math.random() | 0]);
+    player.position.y = 0;
+    player.position.x = (arena[0].length / 2 | 0) - (player.piece[0].length / 2 | 0);
+    if(collide(arena,player))
+    {
+        arena.forEach(row => row.fill(0));
+    }
+}
 function stick(arena,player)
 {
     player.piece.forEach((row,y) =>{
@@ -70,8 +139,10 @@ function drawPiece(piece,offset)
         row.forEach((value,x) => {
             if (value != 0)
             {
-                ctx.fillStyle = 'red';
+                ctx.fillStyle = colors[value];
+               // ctx.strokeRect(x ,y ,1,1);
                 ctx.fillRect(x +offset.x,y + offset.y,1,1);
+               
             }
         });
     });
@@ -97,15 +168,15 @@ function playerDrop()
     {
         player.position.y--;
         stick(arena,player);
-        player.position.y =0;
+        playerReset();
     }
     
     dropCounter = 0;
 }
 
 const player = {
-    position: {x: 0, y: 0},
-    piece:piece,
+    position: {x:5, y: 5},
+    piece:createElement('T'),
 }
 
 function playerMove(value)
