@@ -110,6 +110,8 @@ function playerReset()
     if(collide(arena,player))
     {
         arena.forEach(row => row.fill(0));
+        player.score=0;
+        updateScore();
     }
 }
 function stick(arena,player)
@@ -124,6 +126,7 @@ function stick(arena,player)
             }
         });
     });
+    console.log(arena);
 }
 function draw()
 {
@@ -140,8 +143,10 @@ function drawPiece(piece,offset)
             if (value != 0)
             {
                 ctx.fillStyle = colors[value];
-               // ctx.strokeRect(x ,y ,1,1);
-                ctx.fillRect(x +offset.x,y + offset.y,1,1);
+                
+               
+             ctx.fillRect(x +offset.x,y + offset.y,1,1);
+             
                
             }
         });
@@ -169,14 +174,40 @@ function playerDrop()
         player.position.y--;
         stick(arena,player);
         playerReset();
+        arenaSweep();
     }
     
     dropCounter = 0;
 }
+function arenaSweep()
+{
 
+    
+   outer: for (let y=arena.length-1; y>0; y--)
+    {
+        for(let x=0; x<arena[y].length; x++)
+        {
+            if(arena[y][x] === 0)
+            {
+                continue outer;
+            }
+        }
+        const row = arena.splice(y, 1)[0].fill(0);
+        arena.unshift(row);
+        y++;
+        player.score+=100;
+        updateScore();
+    }
+}
+function updateScore()
+{
+
+document.querySelector('.score').innerText=`Score:${player.score}`;
+}
 const player = {
+    score:0,
     position: {x:5, y: 5},
-    piece:createElement('T'),
+    piece:null,
 }
 
 function playerMove(value)
@@ -242,6 +273,6 @@ else if( e.keyCode === 88 ){
     pieceRotate(-1);
 }
 });
-
-
+updateScore();
+playerReset();
 update();

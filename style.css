@@ -1,0 +1,18 @@
+body
+{
+
+text-align:center;
+background-color:#202028;
+color:#fff;
+font-size:2em;
+}
+.score
+{
+padding:0.6em;
+}
+
+canvas
+{
+    border:solid white .2em;
+    height:80vh;
+}
